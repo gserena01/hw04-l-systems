@@ -1,3 +1,6 @@
+![image](https://user-images.githubusercontent.com/60444726/138163560-f8537878-23f3-4a77-aae0-31b7e6201581.png)
+
+
 # Homework 4: L-systems
 
 For this assignment, you will design a set of formal grammar rules to create
