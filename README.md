@@ -1,5 +1,6 @@
 ![image](https://user-images.githubusercontent.com/60444726/138163560-f8537878-23f3-4a77-aae0-31b7e6201581.png)
 
+![Screenshot 2021-10-20 200324](https://user-images.githubusercontent.com/60444726/138274074-d694a82b-69f7-44e3-a6fc-c970d17ae49c.png)
 
 # Homework 4: L-systems
 
