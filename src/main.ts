@@ -7,6 +7,7 @@ import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
+import LSystem from './shaders/l-system/L-System';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -16,12 +17,16 @@ const controls = {
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
+let coral : LSystem = new LSystem();
 
 function loadScene() {
   square = new Square();
   square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
+
+  coral.createMeshes();
+  coral.makeTree();
 
   // Set up instanced rendering data arrays here.
   // This example creates a set of positional
@@ -74,7 +79,9 @@ function main() {
   // Initial call to load scene
   loadScene();
 
+  //const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
   const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
+
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -101,7 +108,7 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      square,
+      coral.branch
     ]);
     stats.end();
 
