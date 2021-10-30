@@ -7,7 +7,9 @@ import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-import LSystem from './shaders/l-system/L-System';
+import Mesh from './geometry/Mesh';
+import {readTextFile} from '../src/globals'
+
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -17,16 +19,56 @@ const controls = {
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
-let coral : LSystem = new LSystem();
+let branch: Mesh;
 
 function loadScene() {
   square = new Square();
   square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
+  branch = new Mesh(readTextFile('resources/cylinder.obj'), vec3.fromValues(0, 0, 0));
+  branch.create();
 
-  coral.createMeshes();
-  coral.makeTree();
+   let colorsArrayBranch = [];
+
+
+ let cols1ArrayBranch = [];
+  cols1ArrayBranch.push(5.0);
+  cols1ArrayBranch.push(0.0);
+  cols1ArrayBranch.push(0.0);
+  cols1ArrayBranch.push(0.0);
+
+  let cols2ArrayBranch = [];
+    cols2ArrayBranch.push(0.0);
+    cols2ArrayBranch.push(5.0);
+  cols2ArrayBranch.push(0.0);
+  cols2ArrayBranch.push(0.0);
+
+  let cols3ArrayBranch = [];
+    cols3ArrayBranch.push(0.0);
+    cols3ArrayBranch.push(0.0);
+  cols3ArrayBranch.push(5.0);
+  cols3ArrayBranch.push(0.0);
+
+  let cols4ArrayBranch = [];
+    cols4ArrayBranch.push(50.0);
+    cols4ArrayBranch.push(50.0);
+  cols4ArrayBranch.push(0.0);
+  cols4ArrayBranch.push(1.0);
+
+  colorsArrayBranch.push(1.0);
+  colorsArrayBranch.push(0.0);
+  colorsArrayBranch.push(1.0);
+  colorsArrayBranch.push(1.0);
+
+  let t1: Float32Array = new Float32Array(cols1ArrayBranch);
+  let t2: Float32Array = new Float32Array(cols2ArrayBranch);
+  let t3: Float32Array = new Float32Array(cols3ArrayBranch);
+  let t4: Float32Array = new Float32Array(cols4ArrayBranch);
+  let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
+  branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
+  branch.setNumInstances(1);
+
 
   // Set up instanced rendering data arrays here.
   // This example creates a set of positional
@@ -79,9 +121,7 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  //const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
   const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
-
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -108,7 +148,8 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      coral.branch
+      //square,
+      branch
     ]);
     stats.end();
 

@@ -25,6 +25,7 @@ class Mesh extends Drawable {
     this.center = vec4.fromValues(center[0], center[1], center[2], 1);
 
     this.objString = objString;
+    console.log("DEBUG: OBJSTRING: " + objString);
   }
 
   create() {  
@@ -97,7 +98,6 @@ this.tCol1 = col1s;
 this.tCol2 = col2s;
 this.tCol3 = col3s;
 this.tCol4 = col4s;
-console.log("DEBUG COLS: " + this.tCol1);
 
 gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
 gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
