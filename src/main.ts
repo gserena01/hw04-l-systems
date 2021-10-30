@@ -1,20 +1,18 @@
-import {vec3} from 'gl-matrix';
-import * as Stats from 'stats-js';
-import * as DAT from 'dat-gui';
-import Square from './geometry/Square';
-import ScreenQuad from './geometry/ScreenQuad';
-import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
-import Camera from './Camera';
-import {setGL} from './globals';
-import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-import Mesh from './geometry/Mesh';
-import {readTextFile} from '../src/globals'
-
+import { vec3 } from "gl-matrix";
+import * as Stats from "stats-js";
+import * as DAT from "dat-gui";
+import Square from "./geometry/Square";
+import ScreenQuad from "./geometry/ScreenQuad";
+import OpenGLRenderer from "./rendering/gl/OpenGLRenderer";
+import Camera from "./Camera";
+import { setGL } from "./globals";
+import ShaderProgram, { Shader } from "./rendering/gl/ShaderProgram";
+import Mesh from "./geometry/Mesh";
+import { readTextFile } from "../src/globals";
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
-const controls = {
-};
+const controls = {};
 
 let square: Square;
 let screenQuad: ScreenQuad;
@@ -26,33 +24,35 @@ function loadScene() {
   square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
-  branch = new Mesh(readTextFile('resources/cylinder.obj'), vec3.fromValues(0, 0, 0));
+  branch = new Mesh(
+    readTextFile("resources/cylinder.obj"),
+    vec3.fromValues(0, 0, 0)
+  );
   branch.create();
 
-   let colorsArrayBranch = [];
+  let colorsArrayBranch = [];
 
-
- let cols1ArrayBranch = [];
+  let cols1ArrayBranch = [];
   cols1ArrayBranch.push(5.0);
   cols1ArrayBranch.push(0.0);
   cols1ArrayBranch.push(0.0);
   cols1ArrayBranch.push(0.0);
 
   let cols2ArrayBranch = [];
-    cols2ArrayBranch.push(0.0);
-    cols2ArrayBranch.push(5.0);
+  cols2ArrayBranch.push(0.0);
+  cols2ArrayBranch.push(5.0);
   cols2ArrayBranch.push(0.0);
   cols2ArrayBranch.push(0.0);
 
   let cols3ArrayBranch = [];
-    cols3ArrayBranch.push(0.0);
-    cols3ArrayBranch.push(0.0);
+  cols3ArrayBranch.push(0.0);
+  cols3ArrayBranch.push(0.0);
   cols3ArrayBranch.push(5.0);
   cols3ArrayBranch.push(0.0);
 
   let cols4ArrayBranch = [];
-    cols4ArrayBranch.push(50.0);
-    cols4ArrayBranch.push(50.0);
+  cols4ArrayBranch.push(50.0);
+  cols4ArrayBranch.push(50.0);
   cols4ArrayBranch.push(0.0);
   cols4ArrayBranch.push(1.0);
 
@@ -69,7 +69,6 @@ function loadScene() {
   branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
   branch.setNumInstances(1);
 
-
   // Set up instanced rendering data arrays here.
   // This example creates a set of positional
   // offsets and gradiated colors for a 100x100 grid
@@ -78,8 +77,8 @@ function loadScene() {
   let offsetsArray = [];
   let colorsArray = [];
   let n: number = 100.0;
-  for(let i = 0; i < n; i++) {
-    for(let j = 0; j < n; j++) {
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
       offsetsArray.push(i);
       offsetsArray.push(j);
       offsetsArray.push(0);
@@ -100,19 +99,19 @@ function main() {
   // Initial display for framerate
   const stats = Stats();
   stats.setMode(0);
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.left = '0px';
-  stats.domElement.style.top = '0px';
+  stats.domElement.style.position = "absolute";
+  stats.domElement.style.left = "0px";
+  stats.domElement.style.top = "0px";
   document.body.appendChild(stats.domElement);
 
   // Add controls to the gui
   const gui = new DAT.GUI();
 
   // get canvas and webgl context
-  const canvas = <HTMLCanvasElement> document.getElementById('canvas');
-  const gl = <WebGL2RenderingContext> canvas.getContext('webgl2');
+  const canvas = <HTMLCanvasElement>document.getElementById("canvas");
+  const gl = <WebGL2RenderingContext>canvas.getContext("webgl2");
   if (!gl) {
-    alert('WebGL 2 not supported!');
+    alert("WebGL 2 not supported!");
   }
   // `setGL` is a function imported above which sets the value of `gl` in the `globals.ts` module.
   // Later, we can import `gl` from `globals.ts` to access it
@@ -121,7 +120,10 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
+  const camera = new Camera(
+    vec3.fromValues(50, 50, 10),
+    vec3.fromValues(50, 50, 0)
+  );
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -129,13 +131,13 @@ function main() {
   gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
 
   const instancedShader = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/instanced-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/instanced-frag.glsl')),
+    new Shader(gl.VERTEX_SHADER, require("./shaders/instanced-vert.glsl")),
+    new Shader(gl.FRAGMENT_SHADER, require("./shaders/instanced-frag.glsl")),
   ]);
 
   const flat = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/flat-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
+    new Shader(gl.VERTEX_SHADER, require("./shaders/flat-vert.glsl")),
+    new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
   ]);
 
   // This function will be called every frame
@@ -149,7 +151,7 @@ function main() {
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
       //square,
-      branch
+      branch,
     ]);
     stats.end();
 
@@ -157,12 +159,16 @@ function main() {
     requestAnimationFrame(tick);
   }
 
-  window.addEventListener('resize', function() {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.setAspectRatio(window.innerWidth / window.innerHeight);
-    camera.updateProjectionMatrix();
-    flat.setDimensions(window.innerWidth, window.innerHeight);
-  }, false);
+  window.addEventListener(
+    "resize",
+    function () {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.setAspectRatio(window.innerWidth / window.innerHeight);
+      camera.updateProjectionMatrix();
+      flat.setDimensions(window.innerWidth, window.innerHeight);
+    },
+    false
+  );
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);

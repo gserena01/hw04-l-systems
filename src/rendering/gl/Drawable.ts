@@ -1,4 +1,4 @@
-import {gl} from '../../globals';
+import { gl } from "../../globals";
 
 abstract class Drawable {
   count: number = 0;
@@ -25,10 +25,9 @@ abstract class Drawable {
   transform3Generated: boolean = false;
   transform4Generated: boolean = false;
 
-
   numInstances: number = 0; // How many instances of this Drawable the shader program should draw
 
-  abstract create() : void;
+  abstract create(): void;
 
   destroy() {
     gl.deleteBuffer(this.bufIdx);
@@ -161,8 +160,6 @@ abstract class Drawable {
     return this.transform4Generated;
   }
 
-  
-
   elemCount(): number {
     return this.count;
   }
@@ -174,6 +171,6 @@ abstract class Drawable {
   setNumInstances(num: number) {
     this.numInstances = num;
   }
-};
+}
 
 export default Drawable;

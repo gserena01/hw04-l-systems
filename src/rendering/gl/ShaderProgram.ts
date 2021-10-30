@@ -1,6 +1,6 @@
-import {vec3, vec4, mat4, mat3} from 'gl-matrix';
-import Drawable from './Drawable';
-import {gl} from '../../globals';
+import { vec3, vec4, mat4, mat3 } from "gl-matrix";
+import Drawable from "./Drawable";
+import { gl } from "../../globals";
 
 var activeProgram: WebGLProgram = null;
 
@@ -16,7 +16,7 @@ export class Shader {
       throw gl.getShaderInfoLog(this.shader);
     }
   }
-};
+}
 
 class ShaderProgram {
   prog: WebGLProgram;
@@ -30,7 +30,6 @@ class ShaderProgram {
   attrTransform2: number;
   attrTransform3: number;
   attrTransform4: number;
-
 
   unifModel: WebGLUniformLocation;
   unifModelInvTr: WebGLUniformLocation;
@@ -62,15 +61,15 @@ class ShaderProgram {
     this.attrTransform2 = gl.getAttribLocation(this.prog, "vs_Transform2");
     this.attrTransform3 = gl.getAttribLocation(this.prog, "vs_Transform3");
     this.attrTransform4 = gl.getAttribLocation(this.prog, "vs_Transform4");
-    
-    this.unifModel      = gl.getUniformLocation(this.prog, "u_Model");
+
+    this.unifModel = gl.getUniformLocation(this.prog, "u_Model");
     this.unifModelInvTr = gl.getUniformLocation(this.prog, "u_ModelInvTr");
-    this.unifViewProj   = gl.getUniformLocation(this.prog, "u_ViewProj");
-    this.unifCameraAxes      = gl.getUniformLocation(this.prog, "u_CameraAxes");
-    this.unifTime      = gl.getUniformLocation(this.prog, "u_Time");
-    this.unifEye   = gl.getUniformLocation(this.prog, "u_Eye");
-    this.unifRef   = gl.getUniformLocation(this.prog, "u_Ref");
-    this.unifUp   = gl.getUniformLocation(this.prog, "u_Up");
+    this.unifViewProj = gl.getUniformLocation(this.prog, "u_ViewProj");
+    this.unifCameraAxes = gl.getUniformLocation(this.prog, "u_CameraAxes");
+    this.unifTime = gl.getUniformLocation(this.prog, "u_Time");
+    this.unifEye = gl.getUniformLocation(this.prog, "u_Eye");
+    this.unifRef = gl.getUniformLocation(this.prog, "u_Ref");
+    this.unifUp = gl.getUniformLocation(this.prog, "u_Up");
   }
 
   use() {
@@ -82,20 +81,20 @@ class ShaderProgram {
 
   setEyeRefUp(eye: vec3, ref: vec3, up: vec3) {
     this.use();
-    if(this.unifEye !== -1) {
+    if (this.unifEye !== -1) {
       gl.uniform3f(this.unifEye, eye[0], eye[1], eye[2]);
     }
-    if(this.unifRef !== -1) {
+    if (this.unifRef !== -1) {
       gl.uniform3f(this.unifRef, ref[0], ref[1], ref[2]);
     }
-    if(this.unifUp !== -1) {
+    if (this.unifUp !== -1) {
       gl.uniform3f(this.unifUp, up[0], up[1], up[2]);
     }
   }
 
   setDimensions(width: number, height: number) {
     this.use();
-    if(this.unifDimensions !== -1) {
+    if (this.unifDimensions !== -1) {
       gl.uniform2f(this.unifDimensions, width, height);
     }
   }
@@ -206,18 +205,29 @@ class ShaderProgram {
     // by the GPU, thus being the same value for the first set of four vertices,
     // then advancing to a new value for the next four, then the next four, and
     // so on.
-    gl.drawElementsInstanced(d.drawMode(), d.elemCount(), gl.UNSIGNED_INT, 0, d.numInstances);
+    gl.drawElementsInstanced(
+      d.drawMode(),
+      d.elemCount(),
+      gl.UNSIGNED_INT,
+      0,
+      d.numInstances
+    );
 
     if (this.attrPos != -1) gl.disableVertexAttribArray(this.attrPos);
     if (this.attrNor != -1) gl.disableVertexAttribArray(this.attrNor);
     if (this.attrCol != -1) gl.disableVertexAttribArray(this.attrCol);
-    if (this.attrTranslate != -1) gl.disableVertexAttribArray(this.attrTranslate);
+    if (this.attrTranslate != -1)
+      gl.disableVertexAttribArray(this.attrTranslate);
     if (this.attrUV != -1) gl.disableVertexAttribArray(this.attrUV);
-    if (this.attrTransform1 != -1) gl.disableVertexAttribArray(this.attrTransform1);
-    if (this.attrTransform2 != -1) gl.disableVertexAttribArray(this.attrTransform2);
-    if (this.attrTransform3 != -1) gl.disableVertexAttribArray(this.attrTransform3);
-    if (this.attrTransform4 != -1) gl.disableVertexAttribArray(this.attrTransform4);
+    if (this.attrTransform1 != -1)
+      gl.disableVertexAttribArray(this.attrTransform1);
+    if (this.attrTransform2 != -1)
+      gl.disableVertexAttribArray(this.attrTransform2);
+    if (this.attrTransform3 != -1)
+      gl.disableVertexAttribArray(this.attrTransform3);
+    if (this.attrTransform4 != -1)
+      gl.disableVertexAttribArray(this.attrTransform4);
   }
-};
+}
 
 export default ShaderProgram;
