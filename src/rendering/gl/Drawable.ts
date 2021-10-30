@@ -133,6 +133,34 @@ abstract class Drawable {
     return this.uvGenerated;
   }
 
+  bindTrans1(): boolean {
+    if (this.transform1Generated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform1);
+    }
+    return this.transform1Generated;
+  }
+
+  bindTrans2(): boolean {
+    if (this.transform2Generated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform2);
+    }
+    return this.transform2Generated;
+  }
+
+  bindTrans3(): boolean {
+    if (this.transform3Generated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform3);
+    }
+    return this.transform3Generated;
+  }
+
+  bindTrans4(): boolean {
+    if (this.transform4Generated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform4);
+    }
+    return this.transform4Generated;
+  }
+
   
 
   elemCount(): number {
