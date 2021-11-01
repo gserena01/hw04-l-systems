@@ -1,10 +1,10 @@
 import DrawingRule from "./DrawingRule";
 import ExpansionRule from "./ExpansionRule";
 import Turtle from "./Turtle";
-import Mesh from "../../geometry/Mesh";
-import {readTextFile} from "../../globals"
+import Mesh from "../geometry/Mesh";
+import {readTextFile} from "../globals"
 import { vec3, mat4, quat } from "gl-matrix";
-import OpenGLRenderer from '../../rendering/gl/OpenGLRenderer';
+import OpenGLRenderer from '../rendering/gl/OpenGLRenderer';
 
 class LSystem {
     turtleStack: Array<Turtle> = [];
@@ -147,7 +147,7 @@ class LSystem {
       let bCol4: Float32Array = new Float32Array(this.branchCols4);
       let bcolors: Float32Array = new Float32Array(this.branchColorsBO);
       this.branch.create();
-      this.branch.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
+     // this.branch.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
       this.branch.setNumInstances(this.branchNum);
     }
 
@@ -172,7 +172,7 @@ class LSystem {
             }
             currExpansion = expandedString;
             this.axioms.push(expandedString);
-        }
+        } 
         this.drawTree();
 
     }
