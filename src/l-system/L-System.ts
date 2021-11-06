@@ -3,20 +3,20 @@ import ExpansionRule from "./ExpansionRule";
 import Turtle from "./Turtle";
 import Mesh from "../geometry/Mesh";
 import { readTextFile } from "../globals";
-import { vec3, mat4, quat } from "gl-matrix";
+import { vec3, mat4, quat, mat3 } from "gl-matrix";
 import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
   turtleStack : Array<Turtle> = [];
   turtle : Turtle = new Turtle(
     vec3.fromValues(50.0, 50.0, 0.0),
-    vec3.fromValues(0.0, 1.0, 0.0)
+    mat3.create()
   );
   drawingRules : Map<string, DrawingRule> = new Map();
   expansionRules : Map<string, ExpansionRule> = new Map();
   seed : string;
   axioms : Array<string> = [];
-  iterations : number = 1;
+  iterations : number = 2;
   // Set up instanced rendering data arrays.
   branchCols1 : Array<number> = [];
   branchCols2 : Array<number> = [];
@@ -49,8 +49,8 @@ class LSystem {
     this.turtleStack = [];
     this.turtle = new Turtle(
       vec3.fromValues(50.0, 50.0, 0.0),
-      vec3.fromValues(0.0, 1.0, 0.0)
-    );
+      mat3.create()
+      );
 
     // define functions below to maintain context of "this"
 
@@ -76,8 +76,7 @@ class LSystem {
 
     this.populateExpansionRules = () => {
       let rule1: ExpansionRule = new ExpansionRule();
-      // rule1.addOutput("FF-[--FF++FF]+[++FF]", 1.0);
-      rule1.addOutput("FF", 1.0)
+      rule1.addOutput("FF-[--FF++FF]+[++FF]", 1.0);
       this.expansionRules.set("F", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
@@ -95,6 +94,7 @@ class LSystem {
       popRule.addOutput(this.popTurtle, 1.0);
       this.drawingRules.set("]", popRule);
 
+      // TODO: Replace these to use appropriate rotation function
       let rotateLeftXRule: DrawingRule = new DrawingRule();
       rotateLeftXRule.addOutput(this.turtle.rotateLeftX, 1.0);
       this.drawingRules.set("+", rotateLeftXRule);
@@ -114,7 +114,7 @@ class LSystem {
       // Calculate transformation
       let transform: mat4 = mat4.create();
       let q: quat = quat.create();
-      quat.rotationTo(q, vec3.fromValues(0, 1, 0), this.turtle.orientation);
+      quat.fromMat3(q, this.turtle.orientation);
       mat4.fromRotationTranslationScale(
         transform,
         q,
@@ -156,7 +156,6 @@ class LSystem {
       // Draw based on grammar
       let count = 0;
       for (let i = 0; i < this.axioms[this.iterations].length; i++) {
-        console.log("DEBUG: THIS DRAWING RULE CHARACTER: " + (this.axioms[this.iterations].charAt(i)));
         let func = this.drawingRules
           .get(this.axioms[this.iterations].charAt(i))
           .getOutput();
@@ -165,10 +164,6 @@ class LSystem {
           count++;
         }
       }
-      console.log("DEBUG: NUM FUNCTIONS CALLED: " + count);
-
-      console.log("DEBUG: BRANCH COL1: " + this.branchCols1);
-      console.log("DEBUG: BRANCH COLors: " + this.branchColorsBO);
 
       let bCol1: Float32Array = new Float32Array(this.branchCols1);
       let bCol2: Float32Array = new Float32Array(this.branchCols2);
@@ -195,7 +190,6 @@ class LSystem {
         currExpansion = expandedString;
         this.axioms.push(expandedString);
       }
-      console.log("DEBUG: FINAL GRAMMAR: " + this.axioms[this.iterations]);
     }
 
     this.makeTree = () => {
@@ -204,7 +198,6 @@ class LSystem {
 
       this.populateExpansionRules();
       this.populateDrawingRules();
-      console.log(" DRAWING RULES POPULATED");
 
       this.expandGrammar();
 
@@ -213,12 +206,11 @@ class LSystem {
 
     this.drawBranch = () => {
       this.turtle.moveForward();
-      console.log("DEBUG: DRAWBRANCH CALLED");
       this.putBranch(
         vec3.fromValues(
-          0.5 - this.turtle.depth * 0.05,
+          1.5 - this.turtle.depth * 0.05,
           3.5,
-          0.5 - this.turtle.depth * 0.05
+          1.5 - this.turtle.depth * 0.05
         )
       );
     };
