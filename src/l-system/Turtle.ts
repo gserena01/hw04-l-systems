@@ -31,7 +31,7 @@ class Turtle {
   // rotate at a random angle
 
   reset() {
-    this.position = vec3.fromValues(0.0, 0.0, 0.0);
+    this.position = vec3.fromValues(50.0, 50.0, 0.0);
     this.orientation = vec3.fromValues(0.0, 1.0, 0.0);
     this.depth = 0;
   }

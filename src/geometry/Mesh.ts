@@ -24,7 +24,6 @@ class Mesh extends Drawable {
     this.center = vec4.fromValues(center[0], center[1], center[2], 1);
 
     this.objString = objString;
-    console.log("DEBUG: OBJSTRING: " + objString);
   }
 
   create() {
