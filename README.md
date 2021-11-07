@@ -6,6 +6,10 @@
 
 ![image](https://user-images.githubusercontent.com/60444726/140631834-e2863c3f-1e70-4da8-9daa-1c8201c916e9.png)
 
+![image](https://user-images.githubusercontent.com/60444726/140631851-8845bd07-5ccd-40ed-b130-9c029304b2e5.png)
+
+![image](https://user-images.githubusercontent.com/60444726/140631854-348ce9c7-f722-4cbc-8ce8-d105a5965d84.png)
+
 
 # Homework 4: L-systems
 
