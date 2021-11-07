@@ -76,15 +76,15 @@ class LSystem {
 
     this.populateExpansionRules = () => {
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FF-[--FF++FF]+[++FF]", 1.0);
+      rule1.addOutput("FF-[-/-/FF+*+*F^F]+[+/+F/^F]", 1.0); // * is the same as \ in houdini here
       this.expansionRules.set("F", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
-      rule2.addOutput("++[F]", 1.0);
+      rule2.addOutput("++//&&[F]", 1.0);
       this.expansionRules.set("X", rule2);
     };
 
-    this.populateDrawingRules = () => {
+      this.populateDrawingRules = () => {
       let pushRule: DrawingRule = new DrawingRule();
       pushRule.addOutput(this.pushTurtle, 1.0);
       this.drawingRules.set("[", pushRule);
@@ -100,6 +100,22 @@ class LSystem {
       let rotateRightXRule: DrawingRule = new DrawingRule();
       rotateRightXRule.addOutput(this.turtle.rotateRightX, 1.0);
       this.drawingRules.set("-", rotateRightXRule);
+
+      let rotatePosYRule: DrawingRule = new DrawingRule();
+      rotatePosYRule.addOutput(this.turtle.rotatePosY, 1.0);
+      this.drawingRules.set("*", rotatePosYRule);
+
+      let rotateNegYRule: DrawingRule = new DrawingRule();
+      rotateNegYRule.addOutput(this.turtle.rotateNegY, 1.0);
+      this.drawingRules.set("/", rotateNegYRule);
+
+      let rotatePosZRule: DrawingRule = new DrawingRule();
+      rotatePosZRule.addOutput(this.turtle.rotatePosZ, 1.0);
+      this.drawingRules.set("&", rotatePosZRule);
+
+      let rotateNegZRule: DrawingRule = new DrawingRule();
+      rotateNegZRule.addOutput(this.turtle.rotateNegZ, 1.0);
+      this.drawingRules.set("^", rotateNegZRule);
 
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
@@ -125,8 +141,8 @@ class LSystem {
         this.branchCols4.push(transform[12 + i]);
       }
 
-      this.branchColorsBO.push(13 / 255);
-      this.branchColorsBO.push(91 / 255);
+      this.branchColorsBO.push(255 / 255);
+      this.branchColorsBO.push(127 / 255);
       this.branchColorsBO.push(80 / 255);
       this.branchColorsBO.push(1.0);
       this.branchNum++;

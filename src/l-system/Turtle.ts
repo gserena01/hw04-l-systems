@@ -13,6 +13,11 @@ class Turtle {
   moveForward: () => void;
   rotateRightX: () => void;
   rotateLeftX: () => void;
+  // TODO: IMPLEMENT THESE TO MATCH NEW ROTATION AXES
+  rotatePosY: () => void;
+  rotateNegY: () => void;
+  rotatePosZ: () => void;
+  rotateNegZ: () => void;
   rotate: (axis: vec3, angle: number) => void;
 
   constructor(pos: vec3, orient: mat3) {
