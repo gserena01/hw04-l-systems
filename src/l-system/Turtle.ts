@@ -8,6 +8,8 @@ class Turtle {
   depth: number = 0;
 
   getForward: () => vec3;
+  getRight: () => vec3;
+  getUp: () => vec3;
   moveForward: () => void;
   rotateRightX: () => void;
   rotateLeftX: () => void;
@@ -25,6 +27,13 @@ class Turtle {
         this.orientation[5]
       );
     };
+
+    this.getRight = () => {
+      return vec3.fromValues(this.orientation[6], this.orientation[7], this.orientation[8]);
+    }
+    this.getUp = () => {
+      return vec3.fromValues(this.orientation[0], this.orientation[1], this.orientation[2]);
+    }
 
     this.moveForward = () => {
       vec3.add(
@@ -46,6 +55,14 @@ class Turtle {
       mat3.fromQuat(m, q);
       mat3.multiply(this.orientation, m, this.orientation);
     };
+
+    this.rotateRightX = () => {
+      this.rotate(this.getUp(), -15);
+    }
+
+    this.rotateLeftX = () => {
+      this.rotate(this.getUp(), 15);
+    }
   }
 
   reset() {

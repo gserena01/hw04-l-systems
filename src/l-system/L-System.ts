@@ -7,22 +7,19 @@ import { vec3, mat4, quat, mat3 } from "gl-matrix";
 import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
-  turtleStack : Array<Turtle> = [];
-  turtle : Turtle = new Turtle(
-    vec3.fromValues(50.0, 50.0, 0.0),
-    mat3.create()
-  );
-  drawingRules : Map<string, DrawingRule> = new Map();
-  expansionRules : Map<string, ExpansionRule> = new Map();
-  seed : string;
-  axioms : Array<string> = [];
-  iterations : number = 2;
+  turtleStack: Array<Turtle> = [];
+  turtle: Turtle = new Turtle(vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+  drawingRules: Map<string, DrawingRule> = new Map();
+  expansionRules: Map<string, ExpansionRule> = new Map();
+  seed: string;
+  axioms: Array<string> = [];
+  iterations: number = 2;
   // Set up instanced rendering data arrays.
-  branchCols1 : Array<number> = [];
-  branchCols2 : Array<number> = [];
-  branchCols3 : Array<number> = [];
-  branchCols4 : Array<number> = [];
-  branchColorsBO : Array<number> = [];
+  branchCols1: Array<number> = [];
+  branchCols2: Array<number> = [];
+  branchCols3: Array<number> = [];
+  branchCols4: Array<number> = [];
+  branchColorsBO: Array<number> = [];
 
   branchNum: number = 0;
   leafNum: number = 0;
@@ -47,10 +44,7 @@ class LSystem {
 
   constructor() {
     this.turtleStack = [];
-    this.turtle = new Turtle(
-      vec3.fromValues(50.0, 50.0, 0.0),
-      mat3.create()
-      );
+    this.turtle = new Turtle(vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
 
     // define functions below to maintain context of "this"
 
@@ -59,19 +53,25 @@ class LSystem {
     };
 
     this.pushTurtle = () => {
+      let newPos : vec3 = vec3.create();
+      let newOrient : mat3 = mat3.create();
       let newTurtle: Turtle = new Turtle(
-        this.turtle.position,
-        this.turtle.orientation
+        vec3.copy(newPos, this.turtle.position),
+        mat3.copy(newOrient, this.turtle.orientation)
       );
+      let newDepth : number = this.turtle.depth;
+      newTurtle.depth = newDepth;
       this.turtleStack.push(newTurtle);
       this.turtle.depth += 1;
     };
 
     this.popTurtle = () => {
-      let newTurtle: Turtle = this.turtleStack.pop();
-      this.turtle.orientation = newTurtle.orientation;
-      this.turtle.position = newTurtle.position;
-      this.turtle.depth -= 1;
+      if (this.turtle.depth > 0) {
+        let newTurtle: Turtle = this.turtleStack.pop();
+        this.turtle.orientation = mat3.copy(mat3.create(), newTurtle.orientation);
+        this.turtle.position = vec3.copy(vec3.create(), newTurtle.position);
+        this.turtle.depth -= 1;
+      }
     };
 
     this.populateExpansionRules = () => {
@@ -82,7 +82,6 @@ class LSystem {
       let rule2: ExpansionRule = new ExpansionRule();
       rule2.addOutput("++[F]", 1.0);
       this.expansionRules.set("X", rule2);
-     console.log("DEBUG: EXPANSION RULES: " + this.expansionRules.size);
     };
 
     this.populateDrawingRules = () => {
@@ -94,7 +93,6 @@ class LSystem {
       popRule.addOutput(this.popTurtle, 1.0);
       this.drawingRules.set("]", popRule);
 
-      // TODO: Replace these to use appropriate rotation function
       let rotateLeftXRule: DrawingRule = new DrawingRule();
       rotateLeftXRule.addOutput(this.turtle.rotateLeftX, 1.0);
       this.drawingRules.set("+", rotateLeftXRule);
@@ -107,7 +105,6 @@ class LSystem {
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
 
-      console.log("DEBUG: DRAWING RULES: " + this.drawingRules.get);
     };
 
     this.putBranch = (scale: vec3) => {
@@ -121,14 +118,12 @@ class LSystem {
         this.turtle.position,
         scale
       );
-      console.log("DEBUG: PUTBRANCH TRANSFORM: " + transform);
       for (let i = 0; i < 4; i++) {
         this.branchCols1.push(transform[i]);
         this.branchCols2.push(transform[4 + i]);
         this.branchCols3.push(transform[8 + i]);
         this.branchCols4.push(transform[12 + i]);
       }
-      console.log("DEBUG: PUTBRANCH COL1: " + this.branchCols1);
 
       this.branchColorsBO.push(13 / 255);
       this.branchColorsBO.push(91 / 255);
@@ -190,7 +185,7 @@ class LSystem {
         currExpansion = expandedString;
         this.axioms.push(expandedString);
       }
-    }
+    };
 
     this.makeTree = () => {
       this.setSeed("FX");
