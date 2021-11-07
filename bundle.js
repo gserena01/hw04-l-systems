@@ -6188,7 +6188,7 @@ let matrix = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
 let coral = new __WEBPACK_IMPORTED_MODULE_10__l_system_L_System__["a" /* default */]();
 function loadScene() {
     coral.makeTree();
-    coral.leaf.create();
+    // coral.leaf.create();
     square = new __WEBPACK_IMPORTED_MODULE_3__geometry_Square__["a" /* default */]();
     square.create();
     screenQuad = new __WEBPACK_IMPORTED_MODULE_4__geometry_ScreenQuad__["a" /* default */]();
@@ -6225,8 +6225,8 @@ function loadScene() {
     let t3 = new Float32Array(cols3ArrayBranch);
     let t4 = new Float32Array(cols4ArrayBranch);
     let branchColors = new Float32Array(colorsArrayBranch);
-    coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-    coral.leaf.setNumInstances(1);
+    //coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
+    //coral.leaf.setNumInstances(1);
     // Set up instanced rendering data arrays here.
     // This example creates a set of positional
     // offsets and gradiated colors for a 100x100 grid
@@ -16855,7 +16855,7 @@ class LSystem {
         };
         this.populateExpansionRules = () => {
             let rule1 = new __WEBPACK_IMPORTED_MODULE_1__ExpansionRule__["a" /* default */]();
-            rule1.addOutput("FF-[-/-/FF+*+*F^F]+[+/+F/^F]", 1.0); // * is the same as \ in houdini here
+            rule1.addOutput("FF#-[-/-/FF#+*+*F^F#]+[+/+F/^F#]#", 1.0); // * is the same as \ in houdini here
             this.expansionRules.set("F", rule1);
             let rule2 = new __WEBPACK_IMPORTED_MODULE_1__ExpansionRule__["a" /* default */]();
             rule2.addOutput("++//&&[F]", 1.0);
@@ -16889,6 +16889,9 @@ class LSystem {
             let forwardRule = new __WEBPACK_IMPORTED_MODULE_0__DrawingRule__["a" /* default */]();
             forwardRule.addOutput(this.drawBranch, 1.0);
             this.drawingRules.set("F", forwardRule);
+            let leafRule = new __WEBPACK_IMPORTED_MODULE_0__DrawingRule__["a" /* default */]();
+            leafRule.addOutput(this.putLeaf, 1.0);
+            this.drawingRules.set("#", leafRule);
         };
         this.putBranch = (scale) => {
             // Calculate transformation
@@ -16908,6 +16911,25 @@ class LSystem {
             this.branchColorsBO.push(1.0);
             this.branchNum++;
         };
+        this.putLeaf = () => {
+            this.turtle.smallMoveForward();
+            // Calculate transformation
+            let transform = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["b" /* mat4 */].create();
+            let q = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["c" /* quat */].create();
+            __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["c" /* quat */].fromMat3(q, this.turtle.orientation);
+            __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["b" /* mat4 */].fromRotationTranslationScale(transform, q, this.turtle.position, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(2.5, 2.5, 2.5));
+            for (let i = 0; i < 4; i++) {
+                this.leafCols1.push(transform[i]);
+                this.leafCols2.push(transform[4 + i]);
+                this.leafCols3.push(transform[8 + i]);
+                this.leafCols4.push(transform[12 + i]);
+            }
+            this.leafColorsBO.push(57 / 255);
+            this.leafColorsBO.push(217 / 255);
+            this.leafColorsBO.push(222 / 255);
+            this.leafColorsBO.push(1.0);
+            this.leafNum++;
+        };
         this.createMeshes = () => {
             this.branch.create();
         };
@@ -16922,6 +16944,14 @@ class LSystem {
             this.branchColorsBO = [];
             this.branch.destroy();
             this.branch.create();
+            this.leafNum = 0;
+            this.leafCols1 = [];
+            this.leafCols2 = [];
+            this.leafCols3 = [];
+            this.leafCols4 = [];
+            this.leafColorsBO = [];
+            this.leaf.destroy();
+            this.leaf.create();
             // Draw based on grammar
             let count = 0;
             for (let i = 0; i < this.axioms[this.iterations].length; i++) {
@@ -16940,6 +16970,13 @@ class LSystem {
             let bcolors = new Float32Array(this.branchColorsBO);
             this.branch.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
             this.branch.setNumInstances(this.branchNum);
+            let lCol1 = new Float32Array(this.leafCols1);
+            let lCol2 = new Float32Array(this.leafCols2);
+            let lCol3 = new Float32Array(this.leafCols3);
+            let lCol4 = new Float32Array(this.leafCols4);
+            let lcolors = new Float32Array(this.leafColorsBO);
+            this.leaf.setInstanceVBOs(lCol1, lCol2, lCol3, lCol4, lcolors);
+            this.leaf.setNumInstances(this.leafNum);
         };
         this.expandGrammar = () => {
             let currExpansion = this.seed;
@@ -17044,6 +17081,7 @@ class ExpansionRule {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_gl_matrix__ = __webpack_require__(2);
 
 // vec3 operations from: https://glmatrix.net/docs/module-vec3.html
+const PI = 3.1415926535;
 class Turtle {
     constructor(pos, orient) {
         this.position = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(0.0, 0.0, 0.0);
@@ -17064,9 +17102,21 @@ class Turtle {
         this.moveForward = () => {
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].add(this.position, this.position, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].scale(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].create(), this.getForward(), 10.0));
         };
+        this.smallMoveForward = () => {
+            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].add(this.position, this.position, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].scale(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].create(), this.getForward(), 5.0));
+        };
         this.rotate = (axis, angle) => {
+            // pick random #
+            let rand = Math.random();
+            // scale it to between -PI/2 and PI/2
+            rand = (rand * PI) - (PI / 2);
+            // sample it on the sin curve
+            let offset = Math.sin(2.0 * rand);
+            // multiply value by 10
+            offset = offset * 10.0;
+            console.log(offset);
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].normalize(axis, axis);
-            let radians = (3.14159 * angle) / 180.0;
+            let radians = (PI * (angle + offset)) / 180.0;
             let q = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* quat */].create();
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* quat */].setAxisAngle(q, axis, radians);
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* quat */].normalize(q, q);
