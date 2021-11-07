@@ -24,7 +24,7 @@ let coral : LSystem = new LSystem();
 
 function loadScene() {
   coral.makeTree();
-coral.leaf.create();
+// coral.leaf.create();
 
 
   square = new Square();
@@ -72,8 +72,8 @@ coral.leaf.create();
   let t3: Float32Array = new Float32Array(cols3ArrayBranch);
   let t4: Float32Array = new Float32Array(cols4ArrayBranch);
   let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
-  coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-  coral.leaf.setNumInstances(1);
+  //coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
+  //coral.leaf.setNumInstances(1);
 
   // Set up instanced rendering data arrays here.
   // This example creates a set of positional

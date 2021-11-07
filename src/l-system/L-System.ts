@@ -14,7 +14,7 @@ class LSystem {
   seed: string;
   axioms: Array<string> = [];
   iterations: number = 2;
-  
+
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
   branchCols2: Array<number> = [];
@@ -48,6 +48,7 @@ class LSystem {
   populateExpansionRules: () => void;
   populateDrawingRules: () => void;
   putBranch: (scale: vec3) => void;
+  putLeaf: () => void;
   createMeshes: () => void;
   drawTree: () => void;
   expandGrammar: () => void;
@@ -90,7 +91,7 @@ class LSystem {
 
     this.populateExpansionRules = () => {
       let rule1: ExpansionRule = new ExpansionRule();
-      rule1.addOutput("FF-[-/-/FF+*+*F^F]+[+/+F/^F]", 1.0); // * is the same as \ in houdini here
+      rule1.addOutput("FF#-[-/-/FF#+*+*F^F#]+[+/+F/^F#]#", 1.0); // * is the same as \ in houdini here
       this.expansionRules.set("F", rule1);
 
       let rule2: ExpansionRule = new ExpansionRule();
@@ -134,6 +135,10 @@ class LSystem {
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
+
+      let leafRule: DrawingRule = new DrawingRule();
+      leafRule.addOutput(this.putLeaf, 1.0);
+      this.drawingRules.set("#", leafRule);
     };
 
     this.putBranch = (scale: vec3) => {
@@ -161,6 +166,33 @@ class LSystem {
       this.branchNum++;
     };
 
+    this.putLeaf = () => {
+      this.turtle.smallMoveForward();
+
+      // Calculate transformation
+      let transform: mat4 = mat4.create();
+      let q: quat = quat.create();
+      quat.fromMat3(q, this.turtle.orientation);
+      mat4.fromRotationTranslationScale(
+        transform,
+        q,
+        this.turtle.position,
+        vec3.fromValues(2.5, 2.5, 2.5)
+      );
+      for (let i = 0; i < 4; i++) {
+        this.leafCols1.push(transform[i]);
+        this.leafCols2.push(transform[4 + i]);
+        this.leafCols3.push(transform[8 + i]);
+        this.leafCols4.push(transform[12 + i]);
+      }
+
+      this.leafColorsBO.push(57 / 255);
+      this.leafColorsBO.push(217 / 255);
+      this.leafColorsBO.push(222 / 255);
+      this.leafColorsBO.push(1.0);
+      this.leafNum++;
+    };
+
     this.createMeshes = () => {
       this.branch.create();
     };
@@ -176,6 +208,15 @@ class LSystem {
       this.branchColorsBO = [];
       this.branch.destroy();
       this.branch.create();
+
+      this.leafNum = 0;
+      this.leafCols1 = [];
+      this.leafCols2 = [];
+      this.leafCols3 = [];
+      this.leafCols4 = [];
+      this.leafColorsBO = [];
+      this.leaf.destroy();
+      this.leaf.create();
 
       // Draw based on grammar
       let count = 0;
@@ -196,6 +237,14 @@ class LSystem {
       let bcolors: Float32Array = new Float32Array(this.branchColorsBO);
       this.branch.setInstanceVBOs(bCol1, bCol2, bCol3, bCol4, bcolors);
       this.branch.setNumInstances(this.branchNum);
+
+      let lCol1: Float32Array = new Float32Array(this.leafCols1);
+      let lCol2: Float32Array = new Float32Array(this.leafCols2);
+      let lCol3: Float32Array = new Float32Array(this.leafCols3);
+      let lCol4: Float32Array = new Float32Array(this.leafCols4);
+      let lcolors: Float32Array = new Float32Array(this.leafColorsBO);
+      this.leaf.setInstanceVBOs(lCol1, lCol2, lCol3, lCol4, lcolors);
+      this.leaf.setNumInstances(this.leafNum);
     };
 
     this.expandGrammar = () => {
