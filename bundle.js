@@ -6188,7 +6188,7 @@ let matrix = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
 let coral = new __WEBPACK_IMPORTED_MODULE_10__l_system_L_System__["a" /* default */]();
 function loadScene() {
     coral.makeTree();
-    console.log("DEBUG CORAL BRANCHES: " + coral.branchCols1);
+    coral.leaf.create();
     square = new __WEBPACK_IMPORTED_MODULE_3__geometry_Square__["a" /* default */]();
     square.create();
     screenQuad = new __WEBPACK_IMPORTED_MODULE_4__geometry_ScreenQuad__["a" /* default */]();
@@ -6220,20 +6220,13 @@ function loadScene() {
     colorsArrayBranch.push(0.0);
     colorsArrayBranch.push(1.0);
     colorsArrayBranch.push(1.0);
-    // let t1: Float32Array = new Float32Array(cols1ArrayBranch);
-    // let t2: Float32Array = new Float32Array(cols2ArrayBranch);
-    // let t3: Float32Array = new Float32Array(cols3ArrayBranch);
-    // let t4: Float32Array = new Float32Array(cols4ArrayBranch);
-    // let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
-    // branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-    // branch.setNumInstances(1);
-    let t1 = new Float32Array(coral.branchCols1);
-    let t2 = new Float32Array(coral.branchCols2);
-    let t3 = new Float32Array(coral.branchCols3);
-    let t4 = new Float32Array(coral.branchCols4);
-    let branchColors = new Float32Array(coral.branchColorsBO);
-    // coral.branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-    //coral.branch.setNumInstances(3);
+    let t1 = new Float32Array(cols1ArrayBranch);
+    let t2 = new Float32Array(cols2ArrayBranch);
+    let t3 = new Float32Array(cols3ArrayBranch);
+    let t4 = new Float32Array(cols4ArrayBranch);
+    let branchColors = new Float32Array(colorsArrayBranch);
+    coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
+    coral.leaf.setNumInstances(1);
     // Set up instanced rendering data arrays here.
     // This example creates a set of positional
     // offsets and gradiated colors for a 100x100 grid
@@ -6317,7 +6310,8 @@ function main() {
         renderer.render(camera, instancedShader, [
             // square,
             // branch,
-            coral.branch
+            coral.branch,
+            coral.leaf
         ]);
         stats.end();
         // Tell the browser to call `tick` again whenever it renders a new frame
@@ -16827,9 +16821,15 @@ class LSystem {
         this.branchCols4 = [];
         this.branchColorsBO = [];
         this.branchNum = 0;
+        this.leafCols1 = [];
+        this.leafCols2 = [];
+        this.leafCols3 = [];
+        this.leafCols4 = [];
+        this.leafColorsBO = [];
         this.leafNum = 0;
         // import objs:
         this.branch = new __WEBPACK_IMPORTED_MODULE_3__geometry_Mesh__["a" /* default */](Object(__WEBPACK_IMPORTED_MODULE_4__globals__["b" /* readTextFile */])("resources/cylinder.obj"), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(0, 0, 0));
+        this.leaf = new __WEBPACK_IMPORTED_MODULE_3__geometry_Mesh__["a" /* default */](Object(__WEBPACK_IMPORTED_MODULE_4__globals__["b" /* readTextFile */])("resources/sphere.obj"), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(0, 0, 0));
         this.turtleStack = [];
         this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
         // define functions below to maintain context of "this"
