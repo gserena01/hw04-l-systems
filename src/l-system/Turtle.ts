@@ -13,7 +13,6 @@ class Turtle {
   moveForward: () => void;
   rotateRightX: () => void;
   rotateLeftX: () => void;
-  // TODO: IMPLEMENT THESE TO MATCH NEW ROTATION AXES
   rotatePosY: () => void;
   rotateNegY: () => void;
   rotatePosZ: () => void;
@@ -34,11 +33,19 @@ class Turtle {
     };
 
     this.getRight = () => {
-      return vec3.fromValues(this.orientation[6], this.orientation[7], this.orientation[8]);
-    }
+      return vec3.fromValues(
+        this.orientation[6],
+        this.orientation[7],
+        this.orientation[8]
+      );
+    };
     this.getUp = () => {
-      return vec3.fromValues(this.orientation[0], this.orientation[1], this.orientation[2]);
-    }
+      return vec3.fromValues(
+        this.orientation[0],
+        this.orientation[1],
+        this.orientation[2]
+      );
+    };
 
     this.moveForward = () => {
       vec3.add(
@@ -63,27 +70,27 @@ class Turtle {
 
     this.rotateRightX = () => {
       this.rotate(this.getUp(), -15);
-    }
+    };
 
     this.rotateLeftX = () => {
       this.rotate(this.getUp(), 15);
-    }
+    };
 
     this.rotatePosY = () => {
       this.rotate(this.getForward(), 15);
-    }
+    };
 
     this.rotateNegY = () => {
       this.rotate(this.getForward(), -15);
-    }
+    };
 
     this.rotatePosZ = () => {
       this.rotate(this.getRight(), 15);
-    }
+    };
 
     this.rotateNegZ = () => {
       this.rotate(this.getRight(), -15);
-    }
+    };
   }
 
   reset() {

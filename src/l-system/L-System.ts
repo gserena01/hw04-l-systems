@@ -14,19 +14,30 @@ class LSystem {
   seed: string;
   axioms: Array<string> = [];
   iterations: number = 2;
+  
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
   branchCols2: Array<number> = [];
   branchCols3: Array<number> = [];
   branchCols4: Array<number> = [];
   branchColorsBO: Array<number> = [];
-
   branchNum: number = 0;
+
+  leafCols1: Array<number> = [];
+  leafCols2: Array<number> = [];
+  leafCols3: Array<number> = [];
+  leafCols4: Array<number> = [];
+  leafColorsBO: Array<number> = [];
   leafNum: number = 0;
 
   // import objs:
   branch: Mesh = new Mesh(
     readTextFile("resources/cylinder.obj"),
+    vec3.fromValues(0, 0, 0)
+  );
+
+  leaf: Mesh = new Mesh(
+    readTextFile("resources/sphere.obj"),
     vec3.fromValues(0, 0, 0)
   );
 
@@ -53,13 +64,13 @@ class LSystem {
     };
 
     this.pushTurtle = () => {
-      let newPos : vec3 = vec3.create();
-      let newOrient : mat3 = mat3.create();
+      let newPos: vec3 = vec3.create();
+      let newOrient: mat3 = mat3.create();
       let newTurtle: Turtle = new Turtle(
         vec3.copy(newPos, this.turtle.position),
         mat3.copy(newOrient, this.turtle.orientation)
       );
-      let newDepth : number = this.turtle.depth;
+      let newDepth: number = this.turtle.depth;
       newTurtle.depth = newDepth;
       this.turtleStack.push(newTurtle);
       this.turtle.depth += 1;
@@ -68,7 +79,10 @@ class LSystem {
     this.popTurtle = () => {
       if (this.turtle.depth > 0) {
         let newTurtle: Turtle = this.turtleStack.pop();
-        this.turtle.orientation = mat3.copy(mat3.create(), newTurtle.orientation);
+        this.turtle.orientation = mat3.copy(
+          mat3.create(),
+          newTurtle.orientation
+        );
         this.turtle.position = vec3.copy(vec3.create(), newTurtle.position);
         this.turtle.depth -= 1;
       }
@@ -84,7 +98,7 @@ class LSystem {
       this.expansionRules.set("X", rule2);
     };
 
-      this.populateDrawingRules = () => {
+    this.populateDrawingRules = () => {
       let pushRule: DrawingRule = new DrawingRule();
       pushRule.addOutput(this.pushTurtle, 1.0);
       this.drawingRules.set("[", pushRule);
@@ -120,7 +134,6 @@ class LSystem {
       let forwardRule: DrawingRule = new DrawingRule();
       forwardRule.addOutput(this.drawBranch, 1.0);
       this.drawingRules.set("F", forwardRule);
-
     };
 
     this.putBranch = (scale: vec3) => {

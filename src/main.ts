@@ -24,7 +24,8 @@ let coral : LSystem = new LSystem();
 
 function loadScene() {
   coral.makeTree();
-  console.log("DEBUG CORAL BRANCHES: " + coral.branchCols1);
+coral.leaf.create();
+
 
   square = new Square();
   square.create();
@@ -66,20 +67,13 @@ function loadScene() {
   colorsArrayBranch.push(1.0);
   colorsArrayBranch.push(1.0);
 
-  // let t1: Float32Array = new Float32Array(cols1ArrayBranch);
-  // let t2: Float32Array = new Float32Array(cols2ArrayBranch);
-  // let t3: Float32Array = new Float32Array(cols3ArrayBranch);
-  // let t4: Float32Array = new Float32Array(cols4ArrayBranch);
-  // let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
-  // branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-  // branch.setNumInstances(1);
-  let t1: Float32Array = new Float32Array(coral.branchCols1);
-  let t2: Float32Array = new Float32Array(coral.branchCols2);
-  let t3: Float32Array = new Float32Array(coral.branchCols3);
-  let t4: Float32Array = new Float32Array(coral.branchCols4);
-  let branchColors: Float32Array = new Float32Array(coral.branchColorsBO);
- // coral.branch.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-  //coral.branch.setNumInstances(3);
+  let t1: Float32Array = new Float32Array(cols1ArrayBranch);
+  let t2: Float32Array = new Float32Array(cols2ArrayBranch);
+  let t3: Float32Array = new Float32Array(cols3ArrayBranch);
+  let t4: Float32Array = new Float32Array(cols4ArrayBranch);
+  let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
+  coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
+  coral.leaf.setNumInstances(1);
 
   // Set up instanced rendering data arrays here.
   // This example creates a set of positional
@@ -186,7 +180,8 @@ function main() {
     renderer.render(camera, instancedShader, [
       // square,
      // branch,
-      coral.branch
+      coral.branch,
+      coral.leaf
     ]);
     stats.end();
 
