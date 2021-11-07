@@ -24,103 +24,9 @@ let coral : LSystem = new LSystem();
 
 function loadScene() {
   coral.makeTree();
-// coral.leaf.create();
 
-
-  square = new Square();
-  square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
-  branch = new Mesh(
-    readTextFile("resources/cylinder.obj"),
-    vec3.fromValues(0, 0, 0)
-  );
-  branch.create();
-
-  let colorsArrayBranch = [];
-  let cols1ArrayBranch = [];
-  cols1ArrayBranch.push(5.0);
-  cols1ArrayBranch.push(0.0);
-  cols1ArrayBranch.push(0.0);
-  cols1ArrayBranch.push(0.0);
-
-  let cols2ArrayBranch = [];
-  cols2ArrayBranch.push(0.0);
-  cols2ArrayBranch.push(5.0);
-  cols2ArrayBranch.push(0.0);
-  cols2ArrayBranch.push(0.0);
-
-  let cols3ArrayBranch = [];
-  cols3ArrayBranch.push(0.0);
-  cols3ArrayBranch.push(0.0);
-  cols3ArrayBranch.push(5.0);
-  cols3ArrayBranch.push(0.0);
-
-  let cols4ArrayBranch = [];
-  cols4ArrayBranch.push(50.0);
-  cols4ArrayBranch.push(50.0);
-  cols4ArrayBranch.push(0.0);
-  cols4ArrayBranch.push(1.0);
-
-  colorsArrayBranch.push(1.0);
-  colorsArrayBranch.push(0.0);
-  colorsArrayBranch.push(1.0);
-  colorsArrayBranch.push(1.0);
-
-  let t1: Float32Array = new Float32Array(cols1ArrayBranch);
-  let t2: Float32Array = new Float32Array(cols2ArrayBranch);
-  let t3: Float32Array = new Float32Array(cols3ArrayBranch);
-  let t4: Float32Array = new Float32Array(cols4ArrayBranch);
-  let branchColors: Float32Array = new Float32Array(colorsArrayBranch);
-  //coral.leaf.setInstanceVBOs(t1, t2, t3, t4, branchColors);
-  //coral.leaf.setNumInstances(1);
-
-  // Set up instanced rendering data arrays here.
-  // This example creates a set of positional
-  // offsets and gradiated colors for a 100x100 grid
-  // of squares, even though the VBO data for just
-  // one square is actually passed to the GPU
-  let offsetsArray = [];
-  let colorsArray = [];
-  let n: number = 100.0;
-  let sCol1 = [];
-  let sCol2 = [];
-  let sCol3 = [];
-  let sCol4 = [];
-
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      mat4.translate(matrix, matrix, vec3.fromValues(i, j, 0));
-      //mat4.scale(matrix, matrix, vec3.fromValues(5.0, 5.0, 5.0));
-      for (let k: number = 0; k < 4; k++) {
-        sCol1.push(matrix[k]);
-        sCol2.push(matrix[k + 4]);
-        sCol3.push(matrix[k + 8]);
-        sCol4.push(matrix[k + 12]);
-      }
-
-      colorsArray.push(j / i);
-      colorsArray.push(j / i);
-      colorsArray.push(1.0);
-      colorsArray.push(1.0); // Alpha channel
-      mat4.identity(matrix);
-    }
-  }
-
-  let offsetsCol1: Float32Array = new Float32Array(sCol1);
-  let offsetsCol2: Float32Array = new Float32Array(sCol2);
-  let offsetsCol3: Float32Array = new Float32Array(sCol3);
-  let offsetsCol4: Float32Array = new Float32Array(sCol4);
-
-  let colors: Float32Array = new Float32Array(colorsArray);
-  square.setInstanceTransformVBOs(
-    offsetsCol1,
-    offsetsCol2,
-    offsetsCol3,
-    offsetsCol4,
-    colors
-  );
-  square.setNumInstances(n * n); // grid of "particles"
 }
 
 function main() {
@@ -149,8 +55,8 @@ function main() {
   loadScene();
 
   const camera = new Camera(
-    vec3.fromValues(5, 5, 10),
-    vec3.fromValues(50, 50, 0)
+    vec3.fromValues(-60, 90, 15),
+    vec3.fromValues(50, 100, 0)
   );
 
   const renderer = new OpenGLRenderer(canvas);
@@ -178,8 +84,6 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      // square,
-     // branch,
       coral.branch,
       coral.leaf
     ]);

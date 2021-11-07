@@ -26,13 +26,9 @@ void main()
     fs_Col = vs_Col;
     fs_Pos = vs_Pos;
 
-
     mat4 TransformMatrix = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);
     fs_Nor = TransformMatrix * vs_Nor;
     vec4 newPos = TransformMatrix * vs_Pos;
-
-    vec3 offset = vs_Translate;
-    vec3 billboardPos = offset + vs_Pos.x * u_CameraAxes[0] + vs_Pos.y * u_CameraAxes[1];
 
     gl_Position = u_ViewProj * vec4(vec3(newPos), 1.0);
 }

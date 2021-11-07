@@ -11,5 +11,5 @@ void main()
     // for falloff: 
     // float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);
     // out_Col = vec4(dist) * fs_Col;
-    out_Col = fs_Col;
+    out_Col = vec4(vec3(fs_Col) , 1.0);
 }

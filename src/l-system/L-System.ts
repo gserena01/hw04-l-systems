@@ -99,6 +99,7 @@ class LSystem {
       this.expansionRules.set("X", rule2);
     };
 
+    // ADD variation in expansion rules and drawing rules
     this.populateDrawingRules = () => {
       let pushRule: DrawingRule = new DrawingRule();
       pushRule.addOutput(this.pushTurtle, 1.0);
