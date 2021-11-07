@@ -12,7 +12,9 @@
 
 # External Resources:
 
-https://stackoverflow.com/questions/14471975/how-can-i-preserve-lexical-scope-in-typescript-with-a-callback-function
+Using Callback Functions: https://stackoverflow.com/questions/14471975/how-can-i-preserve-lexical-scope-in-typescript-with-a-callback-function
+
+L-System Visualizer: https://www.kevs3d.co.uk/dev/lsystems/
 
 
 # Homework 4: L-systems
