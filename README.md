@@ -2,6 +2,11 @@
 
 ![Screenshot 2021-10-20 200324](https://user-images.githubusercontent.com/60444726/138274074-d694a82b-69f7-44e3-a6fc-c970d17ae49c.png)
 
+# Reference Images:
+
+![image](https://user-images.githubusercontent.com/60444726/140631834-e2863c3f-1e70-4da8-9daa-1c8201c916e9.png)
+
+
 # Homework 4: L-systems
 
 For this assignment, you will design a set of formal grammar rules to create
