@@ -68,6 +68,22 @@ class Turtle {
     this.rotateLeftX = () => {
       this.rotate(this.getUp(), 15);
     }
+
+    this.rotatePosY = () => {
+      this.rotate(this.getForward(), 15);
+    }
+
+    this.rotateNegY = () => {
+      this.rotate(this.getForward(), -15);
+    }
+
+    this.rotatePosZ = () => {
+      this.rotate(this.getRight(), 15);
+    }
+
+    this.rotateNegZ = () => {
+      this.rotate(this.getRight(), -15);
+    }
   }
 
   reset() {
