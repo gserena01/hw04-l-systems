@@ -10,6 +10,12 @@
 
 ![image](https://user-images.githubusercontent.com/60444726/140631854-348ce9c7-f722-4cbc-8ce8-d105a5965d84.png)
 
+# External Resources:
+
+Using Callback Functions: https://stackoverflow.com/questions/14471975/how-can-i-preserve-lexical-scope-in-typescript-with-a-callback-function
+
+L-System Visualizer: https://www.kevs3d.co.uk/dev/lsystems/
+
 
 # Homework 4: L-systems
 
