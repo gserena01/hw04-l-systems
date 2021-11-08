@@ -19,6 +19,12 @@ class Turtle {
   rotateNegY: () => void;
   rotatePosZ: () => void;
   rotateNegZ: () => void;
+  rotateBigRightX: () => void;
+  rotateBigLeftX: () => void;
+  rotateBigPosY: () => void;
+  rotateBigNegY: () => void;
+  rotateBigPosZ: () => void;
+  rotateBigNegZ: () => void;
   rotate: (axis: vec3, angle: number) => void;
 
   constructor(pos: vec3, orient: mat3) {
@@ -111,6 +117,29 @@ class Turtle {
     this.rotateNegZ = () => {
       this.rotate(this.getRight(), -15);
     };
+    this.rotateBigRightX = () => {
+      this.rotate(this.getUp(), -30);
+    };
+    
+    this.rotateBigLeftX = () => {
+      this.rotate(this.getUp(), 30);
+    }
+
+    this.rotateBigPosY = () => {
+      this.rotate(this.getForward(), 30);
+    }
+
+    this.rotateBigNegY = () => {
+      this.rotate(this.getForward(), -30);
+    }
+
+    this.rotateBigPosZ = () => {
+      this.rotate(this.getRight(), 30);
+    }
+
+    this.rotateBigNegZ = () => {
+      this.rotate(this.getRight(), -30);
+    }
   }
 
   reset() {
