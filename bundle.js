@@ -6080,22 +6080,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-// Define an object with application parameters and button callbacks
-// This will be referred to by dat.GUI's functions that add GUI elements.
-const controls = {
-    iterations: 3,
-    angle: 15
+var palette = {
+    color1: [255, 127.0, 80.0, 1.0],
+    color2: [57, 217, 222, 1.0],
 };
+// controls: 
+let prevIters = 3;
+let prevAngle = 15;
+let prevScale = 1;
+let prevColor1 = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
+let prevColor2 = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
 let square;
 let screenQuad;
 let time = 0.0;
 let branch;
 let matrix = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-let coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](4, 15);
-// controls: 
-let prevIters = 3;
-let prevAngle = 15;
+let coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](4, 15, 1, prevColor1, prevColor2);
+// Define an object with application parameters and button callbacks
+// This will be referred to by dat.GUI's functions that add GUI elements.
+const controls = {
+    iterations: 3,
+    angle: 15,
+    decoration_scale: 1,
+    'Generate': loadScene
+};
 function loadScene() {
+    coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](controls.iterations, controls.angle, controls.decoration_scale, prevColor1, prevColor2);
     coral.makeTree();
     screenQuad = new __WEBPACK_IMPORTED_MODULE_3__geometry_ScreenQuad__["a" /* default */]();
     screenQuad.create();
@@ -6112,6 +6122,10 @@ function main() {
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
     gui.add(controls, 'iterations', 1, 5).step(1);
     gui.add(controls, 'angle', 1, 20).step(1);
+    gui.add(controls, 'decoration_scale', 0, 3).step(.1);
+    gui.addColor(palette, 'color1');
+    gui.addColor(palette, 'color2');
+    gui.add(controls, 'Generate');
     // get canvas and webgl context
     const canvas = document.getElementById("canvas");
     const gl = canvas.getContext("webgl2");
@@ -6136,12 +6150,20 @@ function main() {
         new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(76)),
         new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(77)),
     ]);
+    function vec4Equals(a, b) {
+        return __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].len(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].subtract(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].create(), a, b)) < .1;
+    }
     // This function will be called every frame
     function tick() {
-        if (controls.iterations != prevIters || controls.angle != prevAngle) {
+        if (controls.iterations != prevIters || controls.angle != prevAngle
+            || controls.decoration_scale != prevScale || !vec4Equals(prevColor1, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0))
+            || !vec4Equals(prevColor2, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0))) {
             prevIters = controls.iterations;
             prevAngle = controls.angle;
-            coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](controls.iterations, controls.angle);
+            prevScale = controls.decoration_scale;
+            prevColor1 = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
+            prevColor2 = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["e" /* vec4 */].fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
+            coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](controls.iterations, controls.angle, controls.decoration_scale, prevColor1, prevColor2);
             coral.makeTree();
         }
         camera.update();
@@ -16578,7 +16600,7 @@ class ShaderProgram {
 
 
 class LSystem {
-    constructor(iters, angle) {
+    constructor(iters, angle, s, col1, col2) {
         this.turtleStack = [];
         this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](15, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
         this.drawingRules = new Map();
@@ -16586,6 +16608,9 @@ class LSystem {
         this.axioms = [];
         this.iterations = 2;
         this.defaultAngle = 15;
+        this.scale = 1;
+        this.color1 = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["e" /* vec4 */].fromValues(255 / 255, 127.0 / 255.0, 80.0 / 255.0, 1.0);
+        this.color2 = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["e" /* vec4 */].fromValues(57 / 255.0, 217 / 255.0, 222 / 255.0, 1.0);
         // Set up instanced rendering data arrays.
         this.branchCols1 = [];
         this.branchCols2 = [];
@@ -16606,6 +16631,9 @@ class LSystem {
         this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](angle, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
         this.iterations = iters;
         this.defaultAngle = angle;
+        this.scale = s;
+        this.color1 = col1;
+        this.color2 = col2;
         // define functions below to maintain context of "this"
         this.setSeed = (s) => {
             this.seed = s;
@@ -16637,7 +16665,6 @@ class LSystem {
             rule2.addOutput("--**^^X#", 0.1);
             this.expansionRules.set("X", rule2);
         };
-        // TODO: ADD variation in drawing rules
         this.populateDrawingRules = () => {
             let pushRule = new __WEBPACK_IMPORTED_MODULE_0__DrawingRule__["a" /* default */]();
             pushRule.addOutput(this.pushTurtle, 1.0);
@@ -16688,9 +16715,9 @@ class LSystem {
                 this.branchCols3.push(transform[8 + i]);
                 this.branchCols4.push(transform[12 + i]);
             }
-            this.branchColorsBO.push(255 / 255);
-            this.branchColorsBO.push(127 / 255);
-            this.branchColorsBO.push(80 / 255);
+            this.branchColorsBO.push(this.color1[0] / 255.0);
+            this.branchColorsBO.push(this.color1[1] / 255.0);
+            this.branchColorsBO.push(this.color1[2] / 255.0);
             this.branchColorsBO.push(1.0);
             this.branchNum++;
         };
@@ -16699,17 +16726,18 @@ class LSystem {
             // Calculate transformation
             let transform = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["b" /* mat4 */].create();
             let q = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["c" /* quat */].create();
+            let s = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].scale(__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].create(), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(6.5, 6.5, 6.5), this.scale);
             __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["c" /* quat */].fromMat3(q, this.turtle.orientation);
-            __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["b" /* mat4 */].fromRotationTranslationScale(transform, q, this.turtle.position, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(2.5, 2.5, 2.5));
+            __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["b" /* mat4 */].fromRotationTranslationScale(transform, q, this.turtle.position, s);
             for (let i = 0; i < 4; i++) {
                 this.leafCols1.push(transform[i]);
                 this.leafCols2.push(transform[4 + i]);
                 this.leafCols3.push(transform[8 + i]);
                 this.leafCols4.push(transform[12 + i]);
             }
-            this.leafColorsBO.push(57 / 255);
-            this.leafColorsBO.push(217 / 255);
-            this.leafColorsBO.push(222 / 255);
+            this.leafColorsBO.push(this.color2[0] / 255.0);
+            this.leafColorsBO.push(this.color2[1] / 255.0);
+            this.leafColorsBO.push(this.color2[2] / 255.0);
             this.leafColorsBO.push(1.0);
             this.leafNum++;
         };
@@ -16789,7 +16817,7 @@ class LSystem {
         };
         this.drawBranch = () => {
             this.turtle.moveForward();
-            this.putBranch(__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(1.5 - this.turtle.depth * 0.05, 3.5, 1.5 - this.turtle.depth * 0.05));
+            this.putBranch(__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(6.5 - this.turtle.depth * 0.85, 8.0, 6.5 - this.turtle.depth * 0.85));
         };
     }
 }
