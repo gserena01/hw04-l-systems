@@ -12,12 +12,24 @@ import LSystem from './l-system/L-System'
 import { readTextFile } from "../src/globals";
 
 
+var palette = {
+  color1: [255, 127.0, 80.0, 1.0], // branch
+  color2: [57, 217, 222, 1.0], // leaf
+};
+
+// controls: 
+let prevIters = 3;
+let prevAngle = 15;
+let prevScale = 1;
+let prevColor1 : vec4 = vec4.fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
+let prevColor2 : vec4 = vec4.fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
+
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 let branch: Mesh;
 let matrix: mat4 = mat4.create();
-let coral : LSystem = new LSystem(4, 15, 1);
+let coral : LSystem = new LSystem(4, 15, 1, prevColor1, prevColor2);
 
 
 // Define an object with application parameters and button callbacks
@@ -29,21 +41,11 @@ const controls = {
   'Generate' : loadScene
 };
 
-var palette = {
-  color1: [0.0, 0.122 * 255.0, 0.58 * 255.0], // ocean
-  color2: [255.0 * 0.761, 255.0 * 0.698, 255.0 * 0.502], // sand
-};
 
 
-// controls: 
-let prevIters = 3;
-let prevAngle = 15;
-let prevScale = 1;
-let prevColor1 : vec4 = vec4.fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
-let prevColor2 : vec4 = vec4.fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
 
 function loadScene() {
-  coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale);
+  coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale, prevColor1, prevColor2);
   coral.makeTree();
 
   screenQuad = new ScreenQuad();
@@ -104,14 +106,21 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require("./shaders/flat-frag.glsl")),
   ]);
 
+  function vec4Equals(a : vec4, b : vec4) {
+    return vec4.len(vec4.subtract(vec4.create(), a, b)) < .1;
+  }
+
   // This function will be called every frame
   function tick() {
     if (controls.iterations != prevIters || controls.angle != prevAngle 
-      || controls.decoration_scale != prevScale) {
+      || controls.decoration_scale != prevScale || !vec4Equals(prevColor1, vec4.fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0))
+        || !vec4Equals(prevColor2, vec4.fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0))) {
       prevIters = controls.iterations;
       prevAngle = controls.angle;
       prevScale = controls.decoration_scale;
-      coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale);
+      prevColor1 = vec4.fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
+      prevColor2 = vec4.fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
+      coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale, prevColor1, prevColor2);
       coral.makeTree();
 
 

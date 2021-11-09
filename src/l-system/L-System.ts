@@ -3,7 +3,7 @@ import ExpansionRule from "./ExpansionRule";
 import Turtle from "./Turtle";
 import Mesh from "../geometry/Mesh";
 import { readTextFile } from "../globals";
-import { vec3, mat4, quat, mat3 } from "gl-matrix";
+import { vec3, mat4, quat, mat3, vec4 } from "gl-matrix";
 import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
@@ -20,6 +20,8 @@ class LSystem {
   iterations: number = 2;
   defaultAngle = 15;
   scale = 1;
+  color1 = vec4.fromValues(255 / 255, 127.0 / 255.0, 80.0 / 255.0, 1.0);
+  color2 = vec4.fromValues(57 / 255.0, 217 /255.0, 222 / 255.0, 1.0);
 
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
@@ -60,7 +62,7 @@ class LSystem {
   expandGrammar: () => void;
   makeTree: () => void;
 
-  constructor(iters: number, angle: number, s: number) {
+  constructor(iters: number, angle: number, s: number, col1 : vec4, col2 : vec4) {
     this.turtleStack = [];
     this.turtle = new Turtle(
       angle,
@@ -70,6 +72,8 @@ class LSystem {
     this.iterations = iters;
     this.defaultAngle = angle;
     this.scale = s;
+    this.color1 = col1;
+    this.color2 = col2;
 
     // define functions below to maintain context of "this"
 
@@ -181,9 +185,9 @@ class LSystem {
         this.branchCols4.push(transform[12 + i]);
       }
 
-      this.branchColorsBO.push(255 / 255);
-      this.branchColorsBO.push(127 / 255);
-      this.branchColorsBO.push(80 / 255);
+      this.branchColorsBO.push(this.color1[0] / 255.0);
+      this.branchColorsBO.push(this.color1[1] / 255.0);
+      this.branchColorsBO.push(this.color1[2] / 255.0);
       this.branchColorsBO.push(1.0);
       this.branchNum++;
     };
@@ -209,9 +213,9 @@ class LSystem {
         this.leafCols4.push(transform[12 + i]);
       }
 
-      this.leafColorsBO.push(57 / 255);
-      this.leafColorsBO.push(217 / 255);
-      this.leafColorsBO.push(222 / 255);
+      this.leafColorsBO.push(this.color2[0] / 255.0);
+      this.leafColorsBO.push(this.color2[1] / 255.0);
+      this.leafColorsBO.push(this.color2[2] / 255.0);
       this.leafColorsBO.push(1.0);
       this.leafNum++;
     };
