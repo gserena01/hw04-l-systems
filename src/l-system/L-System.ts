@@ -8,12 +8,13 @@ import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
   turtleStack: Array<Turtle> = [];
-  turtle: Turtle = new Turtle(vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+  turtle: Turtle = new Turtle(15, vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
   drawingRules: Map<string, DrawingRule> = new Map();
   expansionRules: Map<string, ExpansionRule> = new Map();
   seed: string;
   axioms: Array<string> = [];
   iterations: number = 2;
+  defaultAngle = 15;
 
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
@@ -54,9 +55,11 @@ class LSystem {
   expandGrammar: () => void;
   makeTree: () => void;
 
-  constructor() {
+  constructor(iters : number, angle : number) {
     this.turtleStack = [];
-    this.turtle = new Turtle(vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+    this.turtle = new Turtle(angle, vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+    this.iterations = iters;
+    this.defaultAngle = angle;
 
     // define functions below to maintain context of "this"
 
@@ -67,7 +70,7 @@ class LSystem {
     this.pushTurtle = () => {
       let newPos: vec3 = vec3.create();
       let newOrient: mat3 = mat3.create();
-      let newTurtle: Turtle = new Turtle(
+      let newTurtle: Turtle = new Turtle(angle, 
         vec3.copy(newPos, this.turtle.position),
         mat3.copy(newOrient, this.turtle.orientation)
       );

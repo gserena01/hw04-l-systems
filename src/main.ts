@@ -13,14 +13,21 @@ import { readTextFile } from "../src/globals";
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
-const controls = {};
+const controls = {
+  iterations: 3,
+  angle: 15
+};
 
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 let branch: Mesh;
 let matrix: mat4 = mat4.create();
-let coral : LSystem = new LSystem();
+let coral : LSystem = new LSystem(4, 15);
+
+// controls: 
+let prevIters = 3;
+let prevAngle = 15;
 
 function loadScene() {
   coral.makeTree();
@@ -40,6 +47,9 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
+  gui.add(controls, 'iterations', 1, 5).step(1);
+  gui.add(controls, 'angle', 1, 20).step(1);
+
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -76,6 +86,14 @@ function main() {
 
   // This function will be called every frame
   function tick() {
+    if (controls.iterations != prevIters || controls.angle != prevAngle) {
+      prevIters = controls.iterations;
+      prevAngle = controls.angle;
+      coral = new LSystem(controls.iterations, controls.angle);
+      coral.makeTree();
+
+
+    }
     camera.update();
     stats.begin();
     instancedShader.setTime(time);

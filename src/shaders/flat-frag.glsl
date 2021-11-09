@@ -48,4 +48,6 @@ void main() {
   if(yVal < .05 * sinVal + (start - 7.0 * dist)) {
     out_Col = vec4(rgb(vec3(0.0, 45.0, 57.0)), 1.0);
   }
+  // muten by some factor
+  out_Col = vec4(vec3(out_Col / 1.5), 1.0);
 }

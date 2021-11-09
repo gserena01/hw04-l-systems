@@ -7,6 +7,7 @@ class Turtle {
   position: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
   orientation: mat3 = mat3.create();
   depth: number = 0;
+  angle : number = 15;
 
   getForward: () => vec3;
   getRight: () => vec3;
@@ -27,10 +28,11 @@ class Turtle {
   rotateBigNegZ: () => void;
   rotate: (axis: vec3, angle: number) => void;
 
-  constructor(pos: vec3, orient: mat3) {
+  constructor(a : number, pos: vec3, orient: mat3) {
     this.position = pos;
     this.orientation = orient;
     this.depth = 0;
+    this.angle = a;
 
     this.getForward = () => {
       return vec3.fromValues(
@@ -80,7 +82,6 @@ class Turtle {
       let offset = Math.sin(2.0 * rand);
       // multiply value by 10
       offset = offset * 10.0;
-      console.log(offset);
 
       vec3.normalize(axis, axis);
       let radians = (PI * (angle + offset)) / 180.0;
@@ -95,50 +96,50 @@ class Turtle {
     };
 
     this.rotateRightX = () => {
-      this.rotate(this.getUp(), -15);
+      this.rotate(this.getUp(), -this.angle);
     };
 
     this.rotateLeftX = () => {
-      this.rotate(this.getUp(), 15);
+      this.rotate(this.getUp(), this.angle);
     };
 
     this.rotatePosY = () => {
-      this.rotate(this.getForward(), 15);
+      this.rotate(this.getForward(), this.angle);
     };
 
     this.rotateNegY = () => {
-      this.rotate(this.getForward(), -15);
+      this.rotate(this.getForward(), -this.angle);
     };
 
     this.rotatePosZ = () => {
-      this.rotate(this.getRight(), 15);
+      this.rotate(this.getRight(), this.angle);
     };
 
     this.rotateNegZ = () => {
-      this.rotate(this.getRight(), -15);
+      this.rotate(this.getRight(), -this.angle);
     };
     this.rotateBigRightX = () => {
-      this.rotate(this.getUp(), -30);
+      this.rotate(this.getUp(), -this.angle * 2.0);
     };
     
     this.rotateBigLeftX = () => {
-      this.rotate(this.getUp(), 30);
+      this.rotate(this.getUp(), this.angle * 2.0);
     }
 
     this.rotateBigPosY = () => {
-      this.rotate(this.getForward(), 30);
+      this.rotate(this.getForward(), this.angle * 2.0);
     }
 
     this.rotateBigNegY = () => {
-      this.rotate(this.getForward(), -30);
+      this.rotate(this.getForward(), -this.angle * 2.0);
     }
 
     this.rotateBigPosZ = () => {
-      this.rotate(this.getRight(), 30);
+      this.rotate(this.getRight(), this.angle * 2.0);
     }
 
     this.rotateBigNegZ = () => {
-      this.rotate(this.getRight(), -30);
+      this.rotate(this.getRight(), -this.angle * 2.0);
     }
   }
 
