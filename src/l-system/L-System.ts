@@ -8,13 +8,18 @@ import OpenGLRenderer from "../rendering/gl/OpenGLRenderer";
 
 class LSystem {
   turtleStack: Array<Turtle> = [];
-  turtle: Turtle = new Turtle(15, vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+  turtle: Turtle = new Turtle(
+    15,
+    vec3.fromValues(50.0, 50.0, 0.0),
+    mat3.create()
+  );
   drawingRules: Map<string, DrawingRule> = new Map();
   expansionRules: Map<string, ExpansionRule> = new Map();
   seed: string;
   axioms: Array<string> = [];
   iterations: number = 2;
   defaultAngle = 15;
+  scale = 1;
 
   // Set up instanced rendering data arrays.
   branchCols1: Array<number> = [];
@@ -55,11 +60,16 @@ class LSystem {
   expandGrammar: () => void;
   makeTree: () => void;
 
-  constructor(iters : number, angle : number) {
+  constructor(iters: number, angle: number, s: number) {
     this.turtleStack = [];
-    this.turtle = new Turtle(angle, vec3.fromValues(50.0, 50.0, 0.0), mat3.create());
+    this.turtle = new Turtle(
+      angle,
+      vec3.fromValues(50.0, 50.0, 0.0),
+      mat3.create()
+    );
     this.iterations = iters;
     this.defaultAngle = angle;
+    this.scale = s;
 
     // define functions below to maintain context of "this"
 
@@ -70,7 +80,8 @@ class LSystem {
     this.pushTurtle = () => {
       let newPos: vec3 = vec3.create();
       let newOrient: mat3 = mat3.create();
-      let newTurtle: Turtle = new Turtle(angle, 
+      let newTurtle: Turtle = new Turtle(
+        angle,
         vec3.copy(newPos, this.turtle.position),
         mat3.copy(newOrient, this.turtle.orientation)
       );
@@ -100,11 +111,10 @@ class LSystem {
 
       let rule2: ExpansionRule = new ExpansionRule();
       rule2.addOutput("++//&&[F]", 0.9);
-      rule2.addOutput("--**^^X#", 0.1)
+      rule2.addOutput("--**^^X#", 0.1);
       this.expansionRules.set("X", rule2);
     };
 
-    // TODO: ADD variation in drawing rules
     this.populateDrawingRules = () => {
       let pushRule: DrawingRule = new DrawingRule();
       pushRule.addOutput(this.pushTurtle, 1.0);
@@ -184,12 +194,13 @@ class LSystem {
       // Calculate transformation
       let transform: mat4 = mat4.create();
       let q: quat = quat.create();
+      let s : vec3 = vec3.scale(vec3.create(), vec3.fromValues(6.5, 6.5, 6.5), this.scale);
       quat.fromMat3(q, this.turtle.orientation);
       mat4.fromRotationTranslationScale(
         transform,
         q,
         this.turtle.position,
-        vec3.fromValues(2.5, 2.5, 2.5)
+        s
       );
       for (let i = 0; i < 4; i++) {
         this.leafCols1.push(transform[i]);
@@ -293,9 +304,9 @@ class LSystem {
       this.turtle.moveForward();
       this.putBranch(
         vec3.fromValues(
-          1.5 - this.turtle.depth * 0.05,
-          3.5,
-          1.5 - this.turtle.depth * 0.05
+          6.5 - this.turtle.depth * 0.85,
+          8.0,
+          6.5 - this.turtle.depth * 0.85
         )
       );
     };

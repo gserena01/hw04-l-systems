@@ -1,4 +1,4 @@
-import { vec3, mat4 } from "gl-matrix";
+import { vec3, mat4, vec4 } from "gl-matrix";
 import * as Stats from "stats-js";
 import * as DAT from "dat-gui";
 import Square from "./geometry/Square";
@@ -11,25 +11,39 @@ import Mesh from "./geometry/Mesh";
 import LSystem from './l-system/L-System'
 import { readTextFile } from "../src/globals";
 
-// Define an object with application parameters and button callbacks
-// This will be referred to by dat.GUI's functions that add GUI elements.
-const controls = {
-  iterations: 3,
-  angle: 15
-};
 
 let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 let branch: Mesh;
 let matrix: mat4 = mat4.create();
-let coral : LSystem = new LSystem(4, 15);
+let coral : LSystem = new LSystem(4, 15, 1);
+
+
+// Define an object with application parameters and button callbacks
+// This will be referred to by dat.GUI's functions that add GUI elements.
+const controls = {
+  iterations: 3,
+  angle: 15,
+  decoration_scale: 1,
+  'Generate' : loadScene
+};
+
+var palette = {
+  color1: [0.0, 0.122 * 255.0, 0.58 * 255.0], // ocean
+  color2: [255.0 * 0.761, 255.0 * 0.698, 255.0 * 0.502], // sand
+};
+
 
 // controls: 
 let prevIters = 3;
 let prevAngle = 15;
+let prevScale = 1;
+let prevColor1 : vec4 = vec4.fromValues(palette.color1[0], palette.color1[1], palette.color1[2], 1.0);
+let prevColor2 : vec4 = vec4.fromValues(palette.color2[0], palette.color2[1], palette.color2[2], 1.0);
 
 function loadScene() {
+  coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale);
   coral.makeTree();
 
   screenQuad = new ScreenQuad();
@@ -49,6 +63,12 @@ function main() {
   const gui = new DAT.GUI();
   gui.add(controls, 'iterations', 1, 5).step(1);
   gui.add(controls, 'angle', 1, 20).step(1);
+  gui.add(controls, 'decoration_scale', 0, 3).step(.1);
+  gui.addColor(palette, 'color1');
+  gui.addColor(palette, 'color2');
+  gui.add(controls, 'Generate');
+
+  
 
 
   // get canvas and webgl context
@@ -86,10 +106,12 @@ function main() {
 
   // This function will be called every frame
   function tick() {
-    if (controls.iterations != prevIters || controls.angle != prevAngle) {
+    if (controls.iterations != prevIters || controls.angle != prevAngle 
+      || controls.decoration_scale != prevScale) {
       prevIters = controls.iterations;
       prevAngle = controls.angle;
-      coral = new LSystem(controls.iterations, controls.angle);
+      prevScale = controls.decoration_scale;
+      coral = new LSystem(controls.iterations, controls.angle, controls.decoration_scale);
       coral.makeTree();
 
 
