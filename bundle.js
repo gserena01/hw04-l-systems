@@ -6082,13 +6082,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
-const controls = {};
+const controls = {
+    iterations: 3,
+    angle: 15
+};
 let square;
 let screenQuad;
 let time = 0.0;
 let branch;
 let matrix = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-let coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */]();
+let coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](4, 15);
+// controls: 
+let prevIters = 3;
+let prevAngle = 15;
 function loadScene() {
     coral.makeTree();
     screenQuad = new __WEBPACK_IMPORTED_MODULE_3__geometry_ScreenQuad__["a" /* default */]();
@@ -6104,6 +6110,8 @@ function main() {
     document.body.appendChild(stats.domElement);
     // Add controls to the gui
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
+    gui.add(controls, 'iterations', 1, 5).step(1);
+    gui.add(controls, 'angle', 1, 20).step(1);
     // get canvas and webgl context
     const canvas = document.getElementById("canvas");
     const gl = canvas.getContext("webgl2");
@@ -6130,6 +6138,12 @@ function main() {
     ]);
     // This function will be called every frame
     function tick() {
+        if (controls.iterations != prevIters || controls.angle != prevAngle) {
+            prevIters = controls.iterations;
+            prevAngle = controls.angle;
+            coral = new __WEBPACK_IMPORTED_MODULE_8__l_system_L_System__["a" /* default */](controls.iterations, controls.angle);
+            coral.makeTree();
+        }
         camera.update();
         stats.begin();
         instancedShader.setTime(time);
@@ -16564,13 +16578,14 @@ class ShaderProgram {
 
 
 class LSystem {
-    constructor() {
+    constructor(iters, angle) {
         this.turtleStack = [];
-        this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
+        this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](15, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
         this.drawingRules = new Map();
         this.expansionRules = new Map();
         this.axioms = [];
         this.iterations = 2;
+        this.defaultAngle = 15;
         // Set up instanced rendering data arrays.
         this.branchCols1 = [];
         this.branchCols2 = [];
@@ -16588,7 +16603,9 @@ class LSystem {
         this.branch = new __WEBPACK_IMPORTED_MODULE_3__geometry_Mesh__["a" /* default */](Object(__WEBPACK_IMPORTED_MODULE_4__globals__["b" /* readTextFile */])("resources/cylinder.obj"), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(0, 0, 0));
         this.leaf = new __WEBPACK_IMPORTED_MODULE_3__geometry_Mesh__["a" /* default */](Object(__WEBPACK_IMPORTED_MODULE_4__globals__["b" /* readTextFile */])("resources/sphere.obj"), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(0, 0, 0));
         this.turtleStack = [];
-        this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
+        this.turtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](angle, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].fromValues(50.0, 50.0, 0.0), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create());
+        this.iterations = iters;
+        this.defaultAngle = angle;
         // define functions below to maintain context of "this"
         this.setSeed = (s) => {
             this.seed = s;
@@ -16596,7 +16613,7 @@ class LSystem {
         this.pushTurtle = () => {
             let newPos = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].create();
             let newOrient = __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].create();
-            let newTurtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](__WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].copy(newPos, this.turtle.position), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].copy(newOrient, this.turtle.orientation));
+            let newTurtle = new __WEBPACK_IMPORTED_MODULE_2__Turtle__["a" /* default */](angle, __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["d" /* vec3 */].copy(newPos, this.turtle.position), __WEBPACK_IMPORTED_MODULE_5_gl_matrix__["a" /* mat3 */].copy(newOrient, this.turtle.orientation));
             let newDepth = this.turtle.depth;
             newTurtle.depth = newDepth;
             this.turtleStack.push(newTurtle);
@@ -16849,13 +16866,15 @@ class ExpansionRule {
 // vec3 operations from: https://glmatrix.net/docs/module-vec3.html
 const PI = 3.1415926535;
 class Turtle {
-    constructor(pos, orient) {
+    constructor(a, pos, orient) {
         this.position = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(0.0, 0.0, 0.0);
         this.orientation = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["a" /* mat3 */].create();
         this.depth = 0;
+        this.angle = 15;
         this.position = pos;
         this.orientation = orient;
         this.depth = 0;
+        this.angle = a;
         this.getForward = () => {
             return __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(this.orientation[3], this.orientation[4], this.orientation[5]);
         };
@@ -16880,7 +16899,6 @@ class Turtle {
             let offset = Math.sin(2.0 * rand);
             // multiply value by 10
             offset = offset * 10.0;
-            console.log(offset);
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].normalize(axis, axis);
             let radians = (PI * (angle + offset)) / 180.0;
             let q = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* quat */].create();
@@ -16891,40 +16909,40 @@ class Turtle {
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["a" /* mat3 */].multiply(this.orientation, m, this.orientation);
         };
         this.rotateRightX = () => {
-            this.rotate(this.getUp(), -15);
+            this.rotate(this.getUp(), -this.angle);
         };
         this.rotateLeftX = () => {
-            this.rotate(this.getUp(), 15);
+            this.rotate(this.getUp(), this.angle);
         };
         this.rotatePosY = () => {
-            this.rotate(this.getForward(), 15);
+            this.rotate(this.getForward(), this.angle);
         };
         this.rotateNegY = () => {
-            this.rotate(this.getForward(), -15);
+            this.rotate(this.getForward(), -this.angle);
         };
         this.rotatePosZ = () => {
-            this.rotate(this.getRight(), 15);
+            this.rotate(this.getRight(), this.angle);
         };
         this.rotateNegZ = () => {
-            this.rotate(this.getRight(), -15);
+            this.rotate(this.getRight(), -this.angle);
         };
         this.rotateBigRightX = () => {
-            this.rotate(this.getUp(), -30);
+            this.rotate(this.getUp(), -this.angle * 2.0);
         };
         this.rotateBigLeftX = () => {
-            this.rotate(this.getUp(), 30);
+            this.rotate(this.getUp(), this.angle * 2.0);
         };
         this.rotateBigPosY = () => {
-            this.rotate(this.getForward(), 30);
+            this.rotate(this.getForward(), this.angle * 2.0);
         };
         this.rotateBigNegY = () => {
-            this.rotate(this.getForward(), -30);
+            this.rotate(this.getForward(), -this.angle * 2.0);
         };
         this.rotateBigPosZ = () => {
-            this.rotate(this.getRight(), 30);
+            this.rotate(this.getRight(), this.angle * 2.0);
         };
         this.rotateBigNegZ = () => {
-            this.rotate(this.getRight(), -30);
+            this.rotate(this.getRight(), -this.angle * 2.0);
         };
     }
     reset() {
@@ -17043,7 +17061,7 @@ module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_T
 /* 75 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\n\nin vec4 fs_Col;\nin vec4 fs_Pos;\n\nout vec4 out_Col;\n\nvoid main()\n{\n    // for falloff: \n    // float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);\n    // out_Col = vec4(dist) * fs_Col;\n    out_Col = vec4(vec3(fs_Col) , 1.0);\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\n\nin vec4 fs_Col;\nin vec4 fs_Pos;\n\nout vec4 out_Col;\n\nvoid main()\n{\n    // for falloff: \n    // float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);\n    // out_Col = vec4(dist) * fs_Col;\n    // sample y position on a sine curve\n    vec4 inverse = vec4(1.0) - fs_Col;\n    float mixVal = sin(fs_Pos.y * 20.0);\n    out_Col = mix(inverse, fs_Col, 1.0 - mixVal);\n}\n"
 
 /***/ }),
 /* 76 */
@@ -17055,7 +17073,7 @@ module.exports = "#version 300 es\nprecision highp float;\n\n// The vertex shade
 /* 77 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\n\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform vec2 u_Dimensions;\nuniform float u_Time;\n\nin vec2 fs_Pos;\nout vec4 out_Col;\n\nvoid main() {\n  out_Col = vec4(0.5 * (fs_Pos + vec2(1.0)), 0.0, 1.0);\n  out_Col = vec4(0.0, 0.0, 0.0, 1.0);\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\n\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform vec2 u_Dimensions;\nuniform float u_Time;\n\nin vec2 fs_Pos;\nout vec4 out_Col;\n\nvec3 rgb(vec3 color) {\n  return vec3(color.x / 255.0, color.y / 255.0, color.z / 255.0);\n}\n\nvoid main() {\n  float yVal = fs_Pos.y;\n  float sinVal = sin(fs_Pos.x * 20.0 + u_Time / 75.0);\n  float dist = .2;\n  float start = .8;\n\n\n  // backdrop just in case of leaks\n  out_Col = vec4(rgb(vec3(242, 252, 255)), 1.0);\n  if(yVal < .05 * sinVal - start) {\n    out_Col = vec4(rgb(vec3(193, 242, 254)), 1.0);\n  }\n  if(yVal < .05 * sinVal + start) {\n    out_Col = vec4(rgb(vec3(144, 233, 255)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - dist)) {\n    out_Col = vec4(rgb(vec3(95, 223, 255)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 2.0 * dist)) {\n    out_Col = vec4(rgb(vec3(46, 213, 255)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 3.0 * dist)) {\n    out_Col = vec4(rgb(vec3(0, 202, 252)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 4.0 * dist)) {\n    out_Col = vec4(rgb(vec3(0, 163, 204)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 5.0 * dist)) {\n    out_Col = vec4(rgb(vec3(0.0, 124.0, 155.0)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 6.0 * dist)) {\n    out_Col = vec4(rgb(vec3(0.0, 84.0, 106.0)), 1.0);\n  }\n  if(yVal < .05 * sinVal + (start - 7.0 * dist)) {\n    out_Col = vec4(rgb(vec3(0.0, 45.0, 57.0)), 1.0);\n  }\n  // muten by some factor\n  out_Col = vec4(vec3(out_Col / 1.5), 1.0);\n}\n"
 
 /***/ })
 /******/ ]);
