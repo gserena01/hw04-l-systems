@@ -47,10 +47,10 @@ let base: Mesh = new Mesh(
 function putBase() {
   base.create();
 
-  let base1 = [10, 0, 0, 0];
+  let base1 = [15, 0, 0, 0];
   let base2 = [0, 10, 0, 0];
-  let base3 = [0, 0, 10, 0];
-  let base4 = [50, 43, 0, 1];
+  let base3 = [0, 0, 15, 0];
+  let base4 = [50, 42, 0, 1];
 
   let cols = [0.761, 0.698, 0.502, 1.0];
 
