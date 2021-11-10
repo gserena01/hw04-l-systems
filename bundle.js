@@ -6194,10 +6194,10 @@ let coral = new __WEBPACK_IMPORTED_MODULE_9__l_system_L_System__["a" /* default 
 let base = new __WEBPACK_IMPORTED_MODULE_8__geometry_Mesh__["a" /* default */](Object(__WEBPACK_IMPORTED_MODULE_10__src_globals__["b" /* readTextFile */])("resources/base.obj"), __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["d" /* vec3 */].fromValues(50, 50, 0));
 function putBase() {
     base.create();
-    let base1 = [10, 0, 0, 0];
+    let base1 = [15, 0, 0, 0];
     let base2 = [0, 10, 0, 0];
-    let base3 = [0, 0, 10, 0];
-    let base4 = [50, 43, 0, 1];
+    let base3 = [0, 0, 15, 0];
+    let base4 = [50, 42, 0, 1];
     let cols = [0.761, 0.698, 0.502, 1.0];
     let bCol1 = new Float32Array(base1);
     let bCol2 = new Float32Array(base2);
